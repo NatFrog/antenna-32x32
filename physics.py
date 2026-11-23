@@ -1,4 +1,4 @@
-"""Differentiable array-factor computation for the 32x32 planar array."""
+# Differentiable array-factor computation for the 32x32 planar array.
 
 import math
 

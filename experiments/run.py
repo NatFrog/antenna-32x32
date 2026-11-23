@@ -1,12 +1,12 @@
-"""Run one or more registered experiments sequentially.
+# Run one or more registered experiments sequentially.
 
-    python -m experiments.run P01 P02          # run configs by id
-    python -m experiments.run P01 --force      # rerun even if result.json exists
+#     python -m experiments.run P01 P02          # can run configs by id
+#     python -m experiments.run P01 --force      # rerun even if result.json exists
 
-Each run writes runs/exp/<id>_<name>/{config.json, log.txt, curve.csv, best.pt, result.json}.
-Training stops at the step budget, the wall-clock cap, or when val loss has not improved
-for `patience` evaluations (convergence test), whichever comes first.
-"""
+# Each run writes runs/exp/*id*_config.json, log.txt, curve.csv, best.pt, result.json}.
+# Training stops at the step budget, the wall-clock cap, or when val loss has not improved
+# for patience` evaluations (testing convergence)
+
 
 import argparse
 import copy
@@ -64,8 +64,8 @@ class Hybrid(nn.Module):
 
 
 def _fit_ipat(old, new_shape):
-    """Copy DC / cos / sin blocks into a wider harmonic axis. Higher harmonics stay 0,
-    so a warm-started scatter pattern reproduces the checkpoint exactly."""
+    # Copy DC / cos / sin blocks into a wider harmonic axis. Higher harmonics stay 0,
+    # so a warm-started scatter pattern reproduces the checkpoint exactly.
     if old.shape == new_shape:
         return old
     if old.dim() != 4 or tuple(old.shape[:2]) != tuple(new_shape[:2]) or old.shape[3] != new_shape[3]:
@@ -82,7 +82,7 @@ def _fit_ipat(old, new_shape):
 
 
 def _expand_dim0(old, new_shape):
-    """Copy overlapping leading channels; new channels keep their init."""
+    # Copy overlapping leading channels
     if old.shape == new_shape:
         return old
     if old.dim() != len(new_shape) or tuple(old.shape[1:]) != tuple(new_shape[1:]):
@@ -94,7 +94,7 @@ def _expand_dim0(old, new_shape):
 
 
 def _fit_knots(old, new_shape):
-    """Linearly resample the theta-knot axis (last dim of sphere-map coefs)."""
+    # Linearly resample the theta-knot axis (last dim of sphere-map coefs).
     if old.shape == new_shape:
         return old
     if old.dim() != 4 or tuple(old.shape[:3]) != tuple(new_shape[:3]):
@@ -106,12 +106,12 @@ def _fit_knots(old, new_shape):
 
 
 def _adapt_tensor(old, new_shape):
-    """Harmonic pad, knot resample, and/or channel expand as needed."""
+    # Harmonic pad, knot resample, and/or channel expand as needed.
     if old.shape == new_shape:
         return old
     if old.dim() != 4:
         return _expand_dim0(old, new_shape)
-    # Align channels first so harm/knot helpers see matching leading dims.
+    # align channels first so harm/knot helpers see matching leading dims.
     if old.shape[0] != new_shape[0]:
         mid = (new_shape[0], *old.shape[1:])
         old = _expand_dim0(old, mid)
@@ -122,7 +122,7 @@ def _adapt_tensor(old, new_shape):
     fit = _fit_ipat(old, new_shape)
     if fit is not None:
         return fit
-    # Harmonics differ and knots differ: pad harm on old knots, then resample knots.
+    # harmonics differ and knots differ: pad harm on old knots, then resample knots.
     if old.shape[2] != new_shape[2] and old.shape[3] != new_shape[3]:
         mid = (*new_shape[:3], old.shape[3])
         harm = _fit_ipat(old, mid)
@@ -139,7 +139,7 @@ def _load_phys(phys, sd, src):
     for k, v in own.items():
         merged[k] = v
     for k, v in sd.items():
-        # Geometry / Fourier bases are rebuilt for the new architecture; never copy them.
+        # Geometry / Fourier bases are rebuilt for the new architecture
         if k not in param_keys:
             continue
         # Independent front/back copies reproduce the single smooth pattern at step 0.

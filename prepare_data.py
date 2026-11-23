@@ -1,13 +1,13 @@
-"""Convert drive-table / result CSVs into a single compressed dataset file.
+# Convert drive-table / result CSVs into a single compressed dataset file.
 
-Output: data/dataset.npz with
-    weights   complex64 [N, 32, 32]   element excitation (row_i, col_j)
-    gain_db   float32   [N, 181, 360] dB(GainTotal) on (theta, phi) grid
-    theta_deg float32   [181]
-    phi_deg   float32   [360]
-    n_beams   int64     [N]
-    names     str       [N]
-"""
+# Output: data/dataset.npz with
+#     weights   complex64 [N, 32, 32]   element excitation (row_i, col_j)
+#     gain_db   float32   [N, 181, 360] dB(GainTotal) on (theta, phi) grid
+#     theta_deg float32   [181]
+#     phi_deg   float32   [360]
+#     n_beams   int64     [N]
+#     names     str       [N]
+# 
 
 import re
 from concurrent.futures import ProcessPoolExecutor

@@ -1,6 +1,6 @@
-"""Measure how well physics alone (array factor -> directivity + mean element pattern)
-explains the simulated gain patterns. Frequency/sign were fitted earlier: 2.4 GHz, +1.
-"""
+# Measure how well physics alone (array factor -> directivity + mean element pattern)
+# explains the simulated gain patterns. Frequency/sign were fitted earlier: 2.4 GHz, +1.
+
 
 import numpy as np
 import torch

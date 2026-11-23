@@ -1,7 +1,5 @@
-"""Plot predictions vs simulation for held-out samples of a trained run.
+# Plot predictions vs simulation for held-out samples of a trained run.
 
-    python evaluate.py --run runs/main
-"""
 
 import argparse
 import json

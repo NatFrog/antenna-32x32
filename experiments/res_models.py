@@ -12,7 +12,7 @@ from model import WeightEncoder, DB_FLOOR
 
 
 class BatchedPhiMap(nn.Module):
-    """Fourier-in-phi, linear-in-theta map with batched coefficients [B, harm, knots]."""
+    # Fourier-in-phi, linear-in-theta map with batched coefficients [B, harm, knots].
 
     def __init__(self, theta_deg, phi_deg, knots=37, harm=8):
         super().__init__()
@@ -31,11 +31,11 @@ class BatchedPhiMap(nn.Module):
 
 
 class SphereFiLM(nn.Module):
-    """Excitation-conditioned smooth dB residual on the sphere.
+    # Excitation-conditioned smooth dB residual on the sphere.
 
-    Tests whether leftover error is a scan-dependent but spatially-smooth
-    pattern (element-pattern / scan-impedance residual), not local lobe wiggling.
-    """
+    # Tests whether leftover error is a scan-dependent but spatially-smooth
+    # pattern (element-pattern / scan-impedance residual), not local lobe wiggling.
+    #
 
     def __init__(self, theta_deg, phi_deg, knots=37, harm=8, cond_dim=256):
         super().__init__()
@@ -50,11 +50,10 @@ class SphereFiLM(nn.Module):
 
 
 class LocalAngleMLP(nn.Module):
-    """Shared 1x1 MLP at each (theta, phi): no spatial mixing, so it cannot move lobes.
+    # Shared 1x1 MLP at each (theta, phi): no spatial mixing, so it cannot move lobes.
 
-    Tests whether leftover error is a local dB recalibration (floor depth, null fill)
-    given the physics value and direction.
-    """
+    # Tests whether leftover error is a local dB recalibration (floor depth, null fill)
+    # given the physics value and direction.
 
     def __init__(self, theta_deg, phi_deg, hidden=64, cond=True, cond_dim=128):
         super().__init__()
@@ -109,12 +108,12 @@ class FieldMul(nn.Module):
 
 
 class ScatterScaleUNet(nn.Module):
-    """dB correction of the scatter power only, from a low-pass U-Net.
+    # dB correction of the scatter power only, from a low-pass U-Net.
 
-    The deep floor is the incoherent AF term. Multiplying that power leaves the
-    coherent beams alone, and dropping skip connections keeps the correction too
-    smooth to memorise a 181x360 speckle map of 600 excitations.
-    """
+    # The deep floor is the incoherent AF term. Multiplying that power leaves the
+    # coherent beams alone, and dropping skip connections keeps the correction too
+    # smooth to memorise a 181x360 speckle map of 600 excitations.
+    # 
 
     def __init__(self, theta_deg, phi_deg, ch=(8, 16, 32), bound=3.0):
         super().__init__()
@@ -131,11 +130,11 @@ class ScatterScaleUNet(nn.Module):
 
 
 class ChannelScale(nn.Module):
-    """Per-excitation dB gain of each scatter channel. No spatial mixing.
+    # Per-excitation dB gain of each scatter channel. No spatial mixing.
 
-    Tests whether the leftover floor is the wrong mix of the existing scatter
-    patterns rather than angular structure those patterns cannot represent.
-    """
+    # Tests whether the leftover floor is the wrong mix of the existing scatter
+    # patterns rather than angular structure those patterns cannot represent.
+    # 
 
     def __init__(self, n, cond_dim=128, bound=6.0):
         super().__init__()

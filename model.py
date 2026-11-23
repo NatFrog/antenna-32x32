@@ -1,14 +1,14 @@
-"""Hybrid physics + neural model: excitation weights [B,32,32] -> gain pattern dB [B,T,P].
+# Hybrid physics + neural model: excitation weights -> gain pattern dB
 
-Stage 1 (PhysicsModel): learnable mutual-coupling kernel and edge gains act on the
-weights, the exact array factor is evaluated on the sphere, multiplied by a learnable
-smooth embedded-element pattern, plus a learnable incoherent floor, then normalised to
-directivity and offset by a learnable efficiency. Linear in the weights, so it handles
-any number of simultaneous beams by construction.
+# Stage 1 (PhysicsModel): learnable mutual-coupling kernel and edge gains act on the
+# weights, the exact array factor is evaluated on the sphere, multiplied by a learnable
+# smooth embedded-element pattern, plus a learnable incoherent floor, then normalised to
+# directivity and offset by a learnable efficiency. Linear in the weights, so it handles
+# any number of simultaneous beams by construction.
 
-Stage 2 (ResidualUNet): a U-Net on the (theta, phi) map, circular in phi, predicts a dB
-correction to the physics pattern, conditioned on an encoding of the weight map.
-"""
+# Stage 2 (ResidualUNet): a U-Net on the (theta, phi) map, circular in phi, predicts a dB
+# correction to the physics pattern, conditioned on an encoding of the weight map.
+#
 
 import math
 
@@ -22,8 +22,8 @@ DB_FLOOR = -60.0
 
 
 class SmoothSphereMap(nn.Module):
-    """Smooth scalar field on the (theta, phi) grid: Fourier series in phi whose
-    coefficients are piecewise-linear in theta. Exactly periodic in phi."""
+    # Smooth scalar field on the (theta, phi) grid: Fourier series in phi whose
+    # coefficients are piecewise-linear in theta. Exactly periodic in phi.
 
     def __init__(self, theta_deg, phi_deg, n_theta_knots=37, n_harm=8):
         super().__init__()
@@ -69,7 +69,7 @@ class PhysicsModel(nn.Module):
         return y * g
 
     def forward(self, w: torch.Tensor) -> torch.Tensor:
-        """Returns gain in dBi, [B,T,P]."""
+        # Returns gain in dBi, [B,T,P].
         w = w / w.abs().flatten(1).amax(1).clamp_min(1e-12)[:, None, None]
         we = self.effective_weights(w)
         p_af = self.af(we).abs().pow(2)
@@ -116,7 +116,7 @@ class ResBlock(nn.Module):
 
 
 class WeightEncoder(nn.Module):
-    """32x32 complex weight map -> conditioning vector (global-phase normalised)."""
+    # 32x32 complex weight map -> conditioning vector (global-phase normalised).
 
     def __init__(self, dim=256):
         super().__init__()

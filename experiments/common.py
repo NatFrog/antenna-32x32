@@ -12,16 +12,16 @@ import torch
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-import data as D  # noqa: E402
-from metrics import loss_fn, pattern_metrics  # noqa: E402
-from physics import C0, N, PITCH_MM  # noqa: E402
+import data as D  
+from metrics import loss_fn, pattern_metrics 
+from physics import C0, N, PITCH_MM
 
 RUNS = ROOT / "runs" / "exp"
 
 
 class _AFFn(torch.autograd.Function):
-    """AF = sum_mn w_mn ex[g,m] ey[g,n]; backward is the adjoint, so the [B,G,N]
-    intermediate is never stored."""
+    #AF = sum_mn w_mn ex[g,m] ey[g,n]; backward is the adjoint, so [B,G,N]
+    #is never stored.
 
     @staticmethod
     def forward(ctx, w, ex, ey):
@@ -51,7 +51,7 @@ class FastAF(torch.nn.Module):
         self._pm = None
 
     def phase_matrix(self):
-        """[n*n, T*P] element phase matrix, built lazily and not saved in checkpoints."""
+        # [n*n, T*P] element phase matrix, built lazily and not saved in checkpointS rn
         if self._pm is None or self._pm.device != self.ex.device:
             self._pm = (self.ex[:, :, None] * self.ey[:, None, :]).reshape(
                 -1, self.n * self.n).t().contiguous()

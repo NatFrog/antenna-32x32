@@ -1,9 +1,6 @@
-"""Predict the radiation pattern for one or more drive-table CSVs.
+# Predict the radiation pattern for one or more drive-table CSVs.
 
-Writes CSVs in the simulator's format (Theta[deg],Phi[deg],dB(GainTotal)).
-
-    python predict.py --run runs/main drive_tables/nb2_0007.csv --out predictions/
-"""
+# Writes CSVs in the simulator's format (Theta[deg],Phi[deg],dB(GainTotal)), easier
 
 import argparse
 from pathlib import Path
