@@ -1,0 +1,8 @@
+__pycache__/
+data/
+runs/
+predictions/
+drive_tables
+Result_drive_tables_32x32/
+experiments/analysis/
+
